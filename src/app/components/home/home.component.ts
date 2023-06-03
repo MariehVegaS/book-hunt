@@ -7,4 +7,14 @@ import { Component } from '@angular/core';
 })
 export class HomeComponent {
 
+  constructor(){
+    this.imageSize();
+  }
+
+  imageSize(){
+    let navbar: any = document.getElementsByTagName("nav");
+    let navbarHeight: string = (navbar.length > 0) ? navbar[0].offsetHeight + "px" : "0px";
+    document.documentElement.style.setProperty('--nav-height', navbarHeight);
+    console.log(navbar[0]);
+  }
 }
