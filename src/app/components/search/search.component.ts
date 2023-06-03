@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./search.component.scss']
 })
 export class SearchComponent {
-
+  simpleSearchLbl = "Game of thrones...";
 }
