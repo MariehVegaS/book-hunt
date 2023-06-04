@@ -11,6 +11,8 @@ export const environment = {
         generalSearchKeyParam: "q=",
         titleSearchKeyParam: "title=",
         authorSearchKeyParam: "author=",
+        availableSearchParam: "fields=*,availability",
+        limitSearchParam: "limit=",
         jsonType: ".json",
         coverType: ".jpg",
         coverSize: "-M"

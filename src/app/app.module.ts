@@ -13,6 +13,8 @@ import { ResultsComponent } from './components/results/results.component';
 import { DetailsComponent } from './components/details/details.component';
 import { AdvancedSearchComponent } from './components/advanced-search/advanced-search.component';
 import { SearchComponent } from './components/search/search.component';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,9 @@ import { SearchComponent } from './components/search/search.component';
     BrowserModule,
     AppRoutingModule,
     MatIconModule,
-    HttpClientModule
+    HttpClientModule,
+    NgxPaginationModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

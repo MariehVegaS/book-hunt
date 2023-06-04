@@ -1,11 +1,12 @@
-import { Doc } from "./api.model";
 import { Author } from "./author.model";
+import { BookSearched } from "./book.model";
 
 export interface BookResults {
     numFound: number,
-    docs?: Doc[]
+    query: string,
+    books: BookSearched[]
 }
 
 export interface AuthorResults {
-    books: Author[]
+    authors: Author[]
 }

@@ -1,2 +1,28 @@
-<p>results works!</p>
-{{ books }}
+<div *ngIf="bookResults" class="mt-5 px-8">
+    <h2 *ngIf="bookResults.numFound > 0" class="text-lg">{{bookResults.numFound + resultsFoundLbl}} "{{bookResults.query}}"</h2>
+    <h2 *ngIf="bookResults.numFound == 0" class="text-lg"> {{noResultsFoundLbl}} </h2>
+    <!-- Results -->
+    <div class="m-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Cards -->
+        <div *ngFor="let book of bookResults.books | paginate: { itemsPerPage: 8, currentPage: page }" class="relative card bg-gray-200 rounded h-80 min-h-full flex flex-col align-middle">
+            <div class="bg-teal-600 rounded-t">
+                <img *ngIf="book.cover" [src]="book.cover" [alt]="book.title + ' cover image'" class="h-52 w-fit mx-auto">
+                <img *ngIf="!book.cover" src="../../../assets/img/no-cover.jpg" [alt]="book.title + ' cover image'" class="h-52 w-fit mx-auto object-cover">
+            </div>
+            <div class="px-4 text-center">
+                <h2 class="font-bold text-base mt-2 truncate overflow-hidden">{{book.title}}</h2>
+                <div *ngIf="book.authors" class="text-sm mt-1 truncate overflow-hidden" >
+                    <ng-container *ngFor="let author of book.authors; let i = index">
+                        <span>
+                            {{author.trim()}}
+                        </span>
+                        <span *ngIf="i < book.authors.length - 1" class="mr-1">, </span>
+                    </ng-container>
+                </div>
+            </div>
+            <button class="mt-3 bg-teal-700 hover:bg-teal-600 rounded py-1 px-3 w-fit font-bold text-white mx-auto absolute bottom-2 left-1/2 transform -translate-x-1/2">{{seeMoreLbl}}</button>
+        </div>
+    </div>
+
+    <pagination-controls class="custom-paginator" (pageChange)="page = $event" [maxSize]="5"></pagination-controls>
+</div>

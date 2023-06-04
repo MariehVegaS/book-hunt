@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -10,8 +11,16 @@ export class NavbarComponent {
   isHome: boolean =  false;
   homeRoutes: Array<String> = ['/', '/home']
 
-  constructor(){
-    this.validateRoute();
+  constructor(private router: Router){
+    
+  }
+
+  ngOnInit() {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.validateRoute();
+      }
+    });
   }
 
   toggleNavbar(){
@@ -23,6 +32,8 @@ export class NavbarComponent {
       if (window.location.pathname === route) {
         this.isHome = true;
         return;
+      } else {
+        this.isHome = false;
       }
     });
   }

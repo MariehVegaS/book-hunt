@@ -8,5 +8,4 @@ export interface Author {
     birth_date: string,
     death_date?: string,
     links?: MoreInfoUrls,
-    authors?: Author[],
 }

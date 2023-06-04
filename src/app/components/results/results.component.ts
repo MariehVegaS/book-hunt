@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { Book } from 'src/app/models/book.model';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BookResults } from 'src/app/models/results.model';
 import { BookService } from 'src/app/services/book.service';
 
 @Component({
@@ -8,11 +9,21 @@ import { BookService } from 'src/app/services/book.service';
   styleUrls: ['./results.component.scss']
 })
 export class ResultsComponent {
-  books: Book[] = [];
+  bookResults: BookResults | undefined;
+  seeMoreLbl: string = "Ver más";
+  noResultsFoundLbl: string = "No results found";
+  resultsFoundLbl: string = " results were found for ";
+  page: number = 1;
 
-  constructor(private bookService: BookService) {
-    this.bookService.getBooks("The lord of rings").subscribe((res) => {
-      console.log(res);
+  constructor(private bookService: BookService, private route: ActivatedRoute, private router: Router ) {
+    this.route.queryParams.subscribe(params => {
+      if (params.hasOwnProperty("q")) {
+        this.bookService.getBookSimpleSearch(params['q']).subscribe((results) => {
+          this.bookResults = results;
+        });
+      } else {
+        this.router.navigate(['/']);
+      }
     });
   }
 
