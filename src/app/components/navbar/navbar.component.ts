@@ -37,4 +37,8 @@ export class NavbarComponent {
       }
     });
   }
+
+  aboutPage(){
+    this.router.navigate(['/about']);
+  }
 }
