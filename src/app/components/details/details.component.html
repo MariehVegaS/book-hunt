@@ -1,1 +1,86 @@
-<p>details works!</p>
+<div *ngIf="bookDetails" class="">
+    <app-carousel *ngIf="bookDetails.covers && bookDetails.covers.length > 0" [slides]="bookDetails.covers"></app-carousel>
+
+    <div class="px-4">
+        <div class="my-4">
+            <h1 class="font-bold text-3xl text-teal-700 text-center">{{bookDetails.title}}</h1>
+            <div class="flex flex-row align-middle justify-center flex-wrap text-sm">
+                <div *ngIf="bookDetails.first_publish_date" class="bg-gray-200 rounded-full px-3 py-1 my-2">
+                    <span class="font-bold">Publish date: </span>
+                    <span class="">{{bookDetails.first_publish_date}}</span>
+                </div>
+                <div *ngIf="bookDetails.number_of_pages" [ngClass]="{'ml-2': bookDetails.first_publish_date}" class="bg-gray-200 rounded-full px-3 py-1 my-2">
+                    <span class="font-bold">Number of pages: </span>
+                    <span class="">{{bookDetails.number_of_pages}}</span>
+                </div>
+            </div>
+            <p *ngIf="bookDetails.description" class="mt-4 text-base"><span class="font-bold">Description: </span> {{bookDetails.description}}</p>
+            <p *ngIf="!bookDetails.description" class="mt-4 text-base"><span class="font-bold">Description: </span> {{noInfoFound}}</p>
+        </div>
+
+        <!-- Links -->
+    
+        <div *ngIf="bookDetails.links && bookDetails.links.length > 0" class="mt-3">
+            <div [ngClass]="{'rounded-b-lg': !bookDetails.authors && !linksOpen}" class="flex flex-row justify-between w-full bg-teal-600 hover:bg-teal-500 rounded-t-lg px-3 py-2 cursor-pointer" (click)="toggleLinks()">
+                <h1 class="text-xl font-bold text-white">Links</h1>
+                <mat-icon *ngIf="!linksOpen" class="text-white">expand_more</mat-icon>
+                <mat-icon *ngIf="linksOpen" class="text-white">expand_less</mat-icon>
+            </div>
+            <div [ngClass]="{'rounded-b-lg': !bookDetails.authors && linksOpen}" *ngIf="linksOpen" class="px-4 py-3 bg-gray-200">
+                <ol>
+                    <li *ngFor="let link of bookDetails.links">- <a [href]="link.url" class="text-teal-600 hover:text-teal-500 underline">{{link.title}}</a></li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Authors -->
+
+        <div *ngIf="bookDetails.authors && bookDetails.authors.length > 0" class="mt-3">
+            <div [ngClass]="{'rounded-t-lg': !bookDetails.links, 'border-t-white border-t-4': bookDetails.links && bookDetails.links.length> 0, 'rounded-b-lg': !authorsOpen }" class="flex flex-row justify-between w-full bg-teal-600 hover:bg-teal-500 px-3 py-2 cursor-pointer" (click)="toggleAuthors()">
+                <h1 class="text-xl font-bold text-white">Authors</h1>
+                <mat-icon *ngIf="!authorsOpen" class="text-white">expand_more</mat-icon>
+                <mat-icon *ngIf="authorsOpen" class="text-white">expand_less</mat-icon>
+            </div>
+            <div *ngIf="authorsOpen" [ngClass]="{'rounded-b-lg': authorsOpen}" class="px-4 py-3 bg-gray-200">
+                <ol>
+                    <li *ngFor="let author of bookDetails.authors" class="my-2">
+                        <div [ngClass]="{'sm:grid-cols-1': !author.photos || !(author.photos.length > 0)}" class="grid grid-cols-1 sm:grid-cols-2 gap-4 px-3">
+                            <div *ngIf="author.photos && author.photos.length > 0">
+                                <app-carousel [slides]="author.photos"></app-carousel>
+                            </div>
+                            <div class="my-auto">
+                                <h1 class="text-lg font-bold text-teal-600">{{author.name}}</h1>
+                                <hr class="bg-gray-400 h-1 rounded">
+                                <div class="flex flex-row align-middle justify-start flex-wrap text-sm pt-2">
+                                    <div *ngIf="author.birth_date" class="bg-teal-600 text-white rounded-full px-3 py-1 my-2">
+                                        <span class="font-bold">Birth date: </span>
+                                        <span class="">{{author.birth_date}}</span>
+                                    </div>
+                                    <span *ngIf="author.birth_date && author.death_date" class="mx-2"> - </span>
+                                    <div *ngIf="author.death_date" class="bg-teal-600 text-white rounded-full px-3 py-1 my-2">
+                                        <span class="font-bold">Death date: </span>
+                                        <span class="">{{author.death_date}}</span>
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <span class="font-bold">Biography: </span>
+                                    <span *ngIf="author.bio" class="line-clamp-3">{{author.bio}}</span>
+                                    <span *ngIf="!author.bio" class="">{{noInfoFound}}</span>
+                                </div>
+                                <div *ngIf="author.links && author.links.length > 0" class="">
+                                    <span class="font-bold">Links: </span>
+                                    <ol>
+                                        <li *ngFor="let link of author.links">- <a [href]="link.url" class="text-teal-600 hover:text-teal-500 underline">{{link.title}}</a></li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Space -->
+<div class="h-10 w-full"></div>

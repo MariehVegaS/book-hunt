@@ -15,6 +15,8 @@ import { AdvancedSearchComponent } from './components/advanced-search/advanced-s
 import { SearchComponent } from './components/search/search.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { FormsModule } from '@angular/forms';
+import { SlickCarouselModule } from 'ngx-slick-carousel';
+import { CarouselComponent } from './components/carousel/carousel.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,8 @@ import { FormsModule } from '@angular/forms';
     ResultsComponent,
     DetailsComponent,
     AdvancedSearchComponent,
-    SearchComponent
+    SearchComponent,
+    CarouselComponent
   ],
   imports: [
     BrowserModule,
@@ -34,7 +37,8 @@ import { FormsModule } from '@angular/forms';
     MatIconModule,
     HttpClientModule,
     NgxPaginationModule,
-    FormsModule
+    FormsModule,
+    SlickCarouselModule
   ],
   providers: [],
   bootstrap: [AppComponent]

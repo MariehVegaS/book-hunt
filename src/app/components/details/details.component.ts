@@ -10,6 +10,9 @@ import { BookService } from 'src/app/services/book.service';
 })
 export class DetailsComponent {
   bookDetails: BookDetails | undefined;
+  linksOpen: boolean = true;
+  authorsOpen: boolean = false;
+  noInfoFound: string = "No information found.";
 
   constructor(private bookService: BookService, private route: ActivatedRoute, private router: Router) {
     this.route.queryParams.subscribe(params => {
@@ -22,6 +25,14 @@ export class DetailsComponent {
         this.router.navigate(['/']);
       }
     });
+  }
+
+  toggleLinks(){
+    (this.linksOpen) ? this.linksOpen = false : this.linksOpen = true;
+  }
+
+  toggleAuthors(){
+    (this.authorsOpen) ? this.authorsOpen = false : this.authorsOpen = true;
   }
 
 }
