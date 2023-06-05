@@ -7,7 +7,7 @@
         <div *ngFor="let book of bookResults.books | paginate: { itemsPerPage: 8, currentPage: page }" class="relative card bg-gray-200 rounded h-80 min-h-full flex flex-col align-middle">
             <div class="bg-teal-600 rounded-t">
                 <img *ngIf="book.cover" [src]="book.cover" [alt]="book.title + ' cover image'" class="h-52 w-fit mx-auto">
-                <img *ngIf="!book.cover" src="../../../assets/img/no-cover.jpg" [alt]="book.title + ' cover image'" class="h-52 w-fit mx-auto object-cover">
+                <img *ngIf="!book.cover" src="assets/img/no-cover.jpg" [alt]="book.title + ' cover image'" class="h-52 w-fit mx-auto object-cover">
             </div>
             <div class="px-4 text-center">
                 <h2 class="font-bold text-base mt-2 truncate overflow-hidden">{{book.title}}</h2>
