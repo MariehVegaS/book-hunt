@@ -1,4 +1,4 @@
 <div class="relative hover:cursor-pointer flex justify-end">
-    <input type="text" class="bg-white h-8 w-60 pl-3 pr-10 rounded focus:outline-none" name="simple-search" [placeholder]="simpleSearchLbl" (keyup.enter)="onSearch()" [(ngModel)]="searchTerm">
-    <span class="absolute top-1 right-2"><mat-icon class="text-gray-500" (click)="onSearch()">search</mat-icon></span>
+    <input type="text" class="bg-white h-8 w-60 pl-3 pr-10 rounded focus:outline-none" name="simple-search" [placeholder]="simpleSearchLbl" (keyup.enter)="search()" [(ngModel)]="searchTerm">
+    <span class="absolute top-1 right-2"><mat-icon class="text-gray-500 hover:text-gray-400" (click)="search()">search</mat-icon></span>
 </div>

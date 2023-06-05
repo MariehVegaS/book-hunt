@@ -9,6 +9,7 @@ export interface BookDetails{
     links?: MoreInfoUrls[],
     first_publish_date: string,
     authors?: Author[],
+    subjects: string,
     number_of_pages_median: number
 }
 
@@ -20,8 +21,11 @@ export interface BookSearched{
 }
 
 export interface Work{
+    title: string,
+    description: string,
+    subjects: string,
     covers?: Cover[],
     links?: MoreInfoUrls[],
-    description: string,
     first_publish_date: string,
+    authors?: Author[],
 }

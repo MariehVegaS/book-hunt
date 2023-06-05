@@ -59,6 +59,10 @@ export class BookService {
     }));
   }
 
+  getBookDetailsByWorkKey(){
+    
+  }
+
   // getBooks(query: string, quantity: number = 5): Observable<BookResults> {
   //   // We use switchmap to wait for the children observables
   //   return this.http.get<BookResults>(this.generalSearchUrl + query).pipe(switchMap((apiBookResults: BookResults) => {
@@ -129,7 +133,7 @@ export class BookService {
   private getWorkByKey(key: string, coversQuantity?: number): Observable<Work> {
     return this.http.get<Work>(this.apiUrl + key + this.jsonType).pipe(map((work: any) => {
       // Info raw from api
-      let { covers, links, description, first_publish_date } = work;
+      let { title, description, subjects, covers, links, first_publish_date } = work;
       // Sometimes the description is in an object, not directly a string
       if (typeof description == 'object' && description.hasOwnProperty("value")) {
         description = description.value; // Sometimes the description is in an object, not directly a string
@@ -146,7 +150,7 @@ export class BookService {
       }
       links = this.getLinksByObjectApi(links);
       // Changing the API data to Interface data
-      return { covers, links, description, first_publish_date };
+      return { title, description, subjects, covers, links, first_publish_date };
     }));
   }
 

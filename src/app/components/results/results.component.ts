@@ -15,7 +15,7 @@ export class ResultsComponent {
   resultsFoundLbl: string = " results were found for ";
   page: number = 1;
 
-  constructor(private bookService: BookService, private route: ActivatedRoute, private router: Router ) {
+  constructor(private bookService: BookService, private route: ActivatedRoute, private router: Router) {
     this.route.queryParams.subscribe(params => {
       if (params.hasOwnProperty("q")) {
         this.bookService.getBookSimpleSearch(params['q']).subscribe((results) => {
@@ -25,6 +25,13 @@ export class ResultsComponent {
         this.router.navigate(['/']);
       }
     });
+  }
+
+  viewDetails(keyWork: string) {
+    // We have to send this the searched value to he results page
+    if (keyWork != "") {
+      this.router.navigate(['/details'], { queryParams: { work: keyWork } });
+    }
   }
 
 }

@@ -13,7 +13,7 @@ export class SearchComponent {
   constructor(private router: Router){
   }
 
-  onSearch() {
+  search() {
     // We have to send this the searched value to he results page
     if (this.searchTerm != "") {
       this.router.navigate(['/results'], { queryParams: { q: this.searchTerm } });
