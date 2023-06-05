@@ -1,4 +1,5 @@
 export interface Doc{
+    key?: string, 
     seed: string[],
     cover_i: number,
     title: string,

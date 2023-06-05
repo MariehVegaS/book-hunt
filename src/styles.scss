@@ -110,3 +110,7 @@ body {
     background-color: rgb(209 213 219);
   }
 }
+
+.h-home{
+  height: calc(100vh - var(--nav-height));
+}

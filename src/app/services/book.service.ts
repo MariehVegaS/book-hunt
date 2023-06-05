@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { BookResults } from '../models/results.model';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, forkJoin, map, of, switchMap } from 'rxjs';
 import { BookDetails, BookSearched, Work } from '../models/book.model';
 import { AuthorFromBook, Doc, MoreInfoUrls } from '../models/api.model';
@@ -22,7 +22,6 @@ export class BookService {
   private coverType: string = environment.booksApi.coverType;
   private coverSize: string = environment.booksApi.coverSize;
   private jsonType: string = environment.booksApi.jsonType;
-
   private generalSearchUrl: string = this.apiUrl + environment.booksApi.generalSearch + environment.booksApi.generalSearchKeyParam;
 
   constructor(private http: HttpClient) { }
@@ -48,10 +47,10 @@ export class BookService {
         // we set the quantity of the results
         for (let i = 0; i < docs.length; i++) {
           let doc: Doc = docs[i];
-          let { seed, title, author_name, cover_i } = doc;
+          let { key, seed, title, author_name, cover_i } = doc;
           let cover = this.getCoverById(cover_i).url;
-          let key = (seed && seed.length > 0) ? seed[0] : "";
-          books.push({ bookKey: key, title: title, cover: cover, authors: author_name });
+          let bookKey = (seed && seed.length > 0) ? seed[0] : "";
+          books.push({ workKey: key, bookKey: bookKey, title: title, cover: cover, authors: author_name });
         }
       }
       // If there is not docs, we return back a empty response
@@ -65,8 +64,9 @@ export class BookService {
    * @returns Observable<BookDetails>
    */
   getBookByKey(bookKey: string): Observable<BookDetails> {
+    const headers = new HttpHeaders().set('Access-Control-Allow-Origin', '*');
     // We use switchmap to wait for the children observables
-    return this.http.get<BookDetails>(this.apiUrl + bookKey + this.jsonType).pipe(switchMap((book: any) => {
+    return this.http.get<BookDetails>(this.apiUrl + bookKey + this.jsonType, {headers}).pipe(switchMap((book: any) => {
       // We get all the information and make a destructuration of each result that we need
       let { number_of_pages, works, authors, full_title } = book;
       // We check if there is a result inside docs 

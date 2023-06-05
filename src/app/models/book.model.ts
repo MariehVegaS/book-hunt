@@ -10,10 +10,11 @@ export interface BookDetails{
     links?: MoreInfoUrls[],
     first_publish_date: string,
     authors?: Author[],
-    number_of_pages: number
+    number_of_pages?: number
 }
 
 export interface BookSearched{
+    workKey?: string,
     bookKey: string, // Book key
     title: string,
     cover: string,

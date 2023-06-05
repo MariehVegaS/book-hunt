@@ -6,5 +6,13 @@ import { Component } from '@angular/core';
   styleUrls: ['./page-not-found.component.scss']
 })
 export class PageNotFoundComponent {
+  constructor() {
+    this.imageSize();
+  }
 
+  imageSize() {
+    let navbar: any = document.getElementsByTagName("nav");
+    let navbarHeight: string = (navbar.length > 0) ? navbar[0].offsetHeight + "px" : "0px";
+    document.documentElement.style.setProperty('--nav-height', navbarHeight);
+  }
 }

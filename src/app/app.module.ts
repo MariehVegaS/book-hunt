@@ -11,7 +11,6 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
 import { AboutComponent } from './components/about/about.component';
 import { ResultsComponent } from './components/results/results.component';
 import { DetailsComponent } from './components/details/details.component';
-import { AdvancedSearchComponent } from './components/advanced-search/advanced-search.component';
 import { SearchComponent } from './components/search/search.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { FormsModule } from '@angular/forms';
@@ -27,7 +26,6 @@ import { CarouselComponent } from './components/carousel/carousel.component';
     AboutComponent,
     ResultsComponent,
     DetailsComponent,
-    AdvancedSearchComponent,
     SearchComponent,
     CarouselComponent
   ],

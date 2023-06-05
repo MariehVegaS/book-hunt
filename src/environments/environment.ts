@@ -3,7 +3,7 @@ export const environment = {
     title: "Production Environment Heading",
     booksApi: {
         mainUrl: "https://openlibrary.org/",
-        coverUrl : "http://covers.openlibrary.org/b/id/",
+        coverUrl : "https://covers.openlibrary.org/b/id/",
         booksApi: "books/",
         authorsApi: "authors/",
         generalSearch: "search.json?",
