@@ -64,9 +64,10 @@ export class BookService {
    * @returns Observable<BookDetails>
    */
   getBookByKey(bookKey: string): Observable<BookDetails> {
-    const headers = new HttpHeaders().set('Access-Control-Allow-Origin', '*');
+    // const headers = new HttpHeaders().set('Access-Control-Allow-Origin', '*');
     // We use switchmap to wait for the children observables
-    return this.http.get<BookDetails>(this.apiUrl + bookKey + this.jsonType, {headers}).pipe(switchMap((book: any) => {
+    // return this.http.get<BookDetails>(this.apiUrl + bookKey + this.jsonType, {headers}).pipe(switchMap((book: any) => {
+      return this.http.get<BookDetails>(this.apiUrl + bookKey + this.jsonType).pipe(switchMap((book: any) => {
       // We get all the information and make a destructuration of each result that we need
       let { number_of_pages, works, authors, full_title } = book;
       // We check if there is a result inside docs 
