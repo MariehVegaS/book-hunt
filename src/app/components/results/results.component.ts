@@ -27,10 +27,10 @@ export class ResultsComponent {
     });
   }
 
-  viewDetails(keyWork: string) {
+  viewDetails(bookKey: string) {
     // We have to send this the searched value to he results page
-    if (keyWork != "") {
-      this.router.navigate(['/details'], { queryParams: { work: keyWork } });
+    if (bookKey != "") {
+      this.router.navigate(['/details'], { queryParams: { book: bookKey } });
     }
   }
 

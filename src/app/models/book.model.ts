@@ -5,16 +5,16 @@ import { Cover } from "./cover.model"
 export interface BookDetails{
     title: string,
     description: string,
+    subjects: string[],
     covers?: Cover[],
     links?: MoreInfoUrls[],
     first_publish_date: string,
     authors?: Author[],
-    subjects: string,
-    number_of_pages_median: number
+    number_of_pages: number
 }
 
 export interface BookSearched{
-    workKey: string, // Work key
+    bookKey: string, // Book key
     title: string,
     cover: string,
     authors?: string[],
@@ -23,7 +23,7 @@ export interface BookSearched{
 export interface Work{
     title: string,
     description: string,
-    subjects: string,
+    subjects: string[],
     covers?: Cover[],
     links?: MoreInfoUrls[],
     first_publish_date: string,

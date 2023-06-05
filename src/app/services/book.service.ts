@@ -3,8 +3,8 @@ import { environment } from 'src/environments/environment';
 import { BookResults } from '../models/results.model';
 import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, map, of, switchMap } from 'rxjs';
-import { BookSearched, Work } from '../models/book.model';
-import { Doc, MoreInfoUrls } from '../models/api.model';
+import { BookDetails, BookSearched, Work } from '../models/book.model';
+import { AuthorFromBook, Doc, MoreInfoUrls } from '../models/api.model';
 import { Cover } from '../models/cover.model';
 import { Author } from '../models/author.model';
 
@@ -15,7 +15,6 @@ export class BookService {
 
   title: string = environment.title;
   private apiUrl: string = environment.booksApi.mainUrl;
-  private authorsPath: string = environment.booksApi.authorsApi;
   private connectorParams: string = "&";
   private availableSearchParam: string = environment.booksApi.availableSearchParam;
   private limitSearchParam: string = environment.booksApi.limitSearchParam;
@@ -49,9 +48,10 @@ export class BookService {
         // we set the quantity of the results
         for (let i = 0; i < docs.length; i++) {
           let doc: Doc = docs[i];
-          let { key, title, author_name, cover_i } = doc;
+          let { seed, title, author_name, cover_i } = doc;
           let cover = this.getCoverById(cover_i).url;
-          books.push({ workKey: key, title: title, cover: cover, authors: author_name});
+          let key = (seed && seed.length > 0) ? seed[0] : "";
+          books.push({ bookKey: key, title: title, cover: cover, authors: author_name });
         }
       }
       // If there is not docs, we return back a empty response
@@ -59,88 +59,85 @@ export class BookService {
     }));
   }
 
-  getBookDetailsByWorkKey(){
-    
+  /**
+   * Function in charge to get the book information by key (ex: books/OL42117571M)
+   * @param bookKey 
+   * @returns Observable<BookDetails>
+   */
+  getBookByKey(bookKey: string): Observable<BookDetails> {
+    // We use switchmap to wait for the children observables
+    return this.http.get<BookDetails>(this.apiUrl + bookKey + this.jsonType).pipe(switchMap((book: any) => {
+      // We get all the information and make a destructuration of each result that we need
+      let { number_of_pages, works, authors, full_title } = book;
+      // We check if there is a result inside docs 
+      if (works && works.length > 0 && works[0].hasOwnProperty("key")) {
+        // We only need the first result, because there is only a work per book
+        const workObservable: Observable<Work> = this.getWorkByKey(works[0].key).pipe(
+          switchMap((work) => {
+            // We extract the necessary information for work
+            let { title, description, subjects, covers, links, first_publish_date } = work;
+            // We validate if there is information about the autors
+            if (authors && authors.length > 0) {
+              // We create a variable to save all the request.
+              const authorObservables: Observable<Author>[] = [];
+              // We search all the information for each author key
+              authors.forEach((author: AuthorFromBook) => {
+                if (author.hasOwnProperty("key")) {
+                  const authorObservable = this.getAuthorByKey(author.key).pipe(
+                    map((author) => {
+                      // We extract the necessary information for author
+                      let { photos, name, bio, birth_date, death_date, links } = author;
+                      return { photos, name, bio, birth_date, death_date, links };
+                    })
+                  );
+                  // We send the observable to the list
+                  authorObservables.push(authorObservable);
+                }
+              });
+              // We return the information found
+              return forkJoin(authorObservables).pipe(
+                map((authors: Author[]) => {
+                  return { title, description, subjects, covers, links, first_publish_date, authors };
+                })
+              );
+            }
+            // If there is no information about authors, we send an empty array
+            return of({ title, description, subjects, covers, links, first_publish_date, authors: [] });
+          })
+        );
+        // We join all the information
+        return forkJoin({
+          work: workObservable,
+          number_of_pages: of(number_of_pages),
+        }).pipe(
+          map(({ work, number_of_pages }) => {
+            return { ...work, number_of_pages };
+          })
+        );
+      }
+
+      // If there is not works and authors, we return back a empty response
+      return of({ title: full_title, description: "", subjects: [], covers: [], links: [], first_publish_date: "", authors: [], number_of_pages: number_of_pages });
+    }));
   }
 
-  // getBooks(query: string, quantity: number = 5): Observable<BookResults> {
-  //   // We use switchmap to wait for the children observables
-  //   return this.http.get<BookResults>(this.generalSearchUrl + query).pipe(switchMap((apiBookResults: BookResults) => {
-  //     // We get all the information and make a destructuration of each result that we need
-  //     let { numFound, docs } = apiBookResults;
-  //     let books: Book[] = [];
-  //     // We check if there is a result inside docs 
-  //     if (docs && docs.length > 0) {
-  //       // We create a variable to save all the request. Related with books
-  //       const bookObservables: Observable<Book>[] = [];
-  //       // we set the quantity of the results
-  //       for (let i = 0; i < quantity; i++) {
-  //         let doc: Doc = docs[i];
-  //         const bookObservable = this.getWorkByKey(doc.key).pipe(
-  //           switchMap((work) => {
-  //             // We extract the necessary information for work and doc
-  //             let { covers, links, description, first_publish_date } = work;
-  //             let { title, number_of_pages_median } = doc;
-  //             // We validate if there is information about the autors
-  //             if (doc.hasOwnProperty("author_key") && doc.author_key.length > 0) {
-  //               // We create a variable to save all the request. Related with authors
-  //               const authorObservables: Observable<Author>[] = [];
-  //               // We search all the information for each author key
-  //               doc.author_key.forEach(authorKey => {
-  //                 const authorObservable = this.getAuthorByKey(authorKey).pipe(
-  //                   map((author) => {
-  //                     // We extract the necessary information for author
-  //                     let { photos, name, bio, birth_date, death_date, links } = author;
-  //                     return { photos, name, bio, birth_date, death_date, links };
-  //                   })
-  //                 );
-  //                 // We send the observable to the list
-  //                 authorObservables.push(authorObservable);
-  //               });
-  //               // We return the information found
-  //               return forkJoin(authorObservables).pipe(
-  //                 map((authors: Author[]) => {
-  //                   return { title, number_of_pages_median, covers, links, description, first_publish_date, authors };
-  //                 })
-  //               );
-  //             }
-  //             // If there is no information about authors, we send an empty array
-  //             return of({ title, number_of_pages_median, covers, links, description, first_publish_date, authors: [] });
-  //           })
-  //         );
-  //         // We send the observable to the list
-  //         bookObservables.push(bookObservable);
-  //       }
-  //       // We join all the information
-  //       return forkJoin(bookObservables).pipe(
-  //         map((bookResults: Book[]) => {
-  //           return { numFound, books: bookResults };
-  //         })
-  //       );
-  //     }
-
-  //     // If there is not docs, we return back a empty response
-  //     return of({ numFound, books });
-  //   }));
-  // }
-
   /**
-   * Function in charge of get the work information by key (ex: works/45621SAD)
-   * @param key 
+   * Function in charge of get the work information by key (ex: /works/45621SAD)
+   * @param workKey 
    * @param coversQuantity 
    * @returns Observable<Work>
    */
-  private getWorkByKey(key: string, coversQuantity?: number): Observable<Work> {
-    return this.http.get<Work>(this.apiUrl + key + this.jsonType).pipe(map((work: any) => {
+  private getWorkByKey(workKey: string, coversQuantity?: number): Observable<Work> {
+    return this.http.get<Work>(this.apiUrl + workKey + this.jsonType).pipe(map((work: any) => {
       // Info raw from api
-      let { title, description, subjects, covers, links, first_publish_date } = work;
+      let { title, description, subjects, covers, links, first_publish_date, } = work;
       // Sometimes the description is in an object, not directly a string
       if (typeof description == 'object' && description.hasOwnProperty("value")) {
         description = description.value; // Sometimes the description is in an object, not directly a string
       }
       // To get exactly the quantity of covers that we need
       if (coversQuantity && coversQuantity <= covers.length) {
-        const covers2Obtain: Cover[] = []; 
+        const covers2Obtain: Cover[] = [];
         for (let i = 0; i < coversQuantity; i++) {
           covers2Obtain.push(this.getCoverById(covers[i]));
         }
@@ -155,7 +152,8 @@ export class BookService {
   }
 
   /**
-   * Create the url for each cover id (ex: 21312412341)
+   * Create an array of Cover each cover id (ex: 7279887)
+   * The Cover interface has the url to display the image
    * @param idsArray 
    * @returns Cover[]
    */
@@ -169,6 +167,12 @@ export class BookService {
     return coverUrls;
   }
 
+  /**
+   * Function in charge of get a Cover image by Id (ex: 7279887)
+   * The Cover interface has the url to display the image
+   * @param id 
+   * @returns Cover
+   */
   private getCoverById(id: number): Cover {
     let cover: Cover = { url: "" };
     if (typeof id == 'number') {
@@ -178,6 +182,18 @@ export class BookService {
     return cover;
   }
 
+  /**
+   * Create an array of MoreInfoUrls each object link (ex: "links": [
+        {
+            "url": "https://www.jkrowling.com/book/harry-potter-deathly-hallows/",
+            "title": "Harry Potter and the Deathly Hallows - J.K. Rowling (jkrowling.com)",
+            "type": {
+                "key": "/type/link"
+            }
+        }, ...])
+   * @param objectApi 
+   * @returns MoreInfoUrls[]
+   */
   private getLinksByObjectApi(objectApi: any[]): MoreInfoUrls[] {
     let links: MoreInfoUrls[] = [];
     if (objectApi && objectApi.length > 0) {
@@ -191,8 +207,13 @@ export class BookService {
     return links;
   }
 
-  private getAuthorByKey(key: string, ): Observable<Author> {
-    return this.http.get<Author>(this.apiUrl + this.authorsPath + key + this.jsonType).pipe(map((author: any) => {
+  /**
+   * Function in charge of get the author information by key (ex: /authors/45621SAD)
+   * @param authorKey 
+   * @returns Observable<Author>
+   */
+  private getAuthorByKey(authorKey: string): Observable<Author> {
+    return this.http.get<Author>(this.apiUrl + authorKey + this.jsonType).pipe(map((author: any) => {
       let { photos, name, bio, birth_date, death_date, links } = author;
       // Changing the API data to Interface data
       photos = this.getCoversByIdArray(photos);
